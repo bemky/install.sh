@@ -5,78 +5,76 @@
 # Homebrew Casks: Applications installed via Homebrew Cask.
 # These are GUI applications available through Homebrew.
 CASKS=(
-  iterm2
+  dropbox
   google-chrome
-  arc
-  visual-studio-code
+  firefox
   spotify
   vlc
-  dropbox
-  google-drive
-  sync
-  github
-  cyberduck
-  postman
+  fork
+  rectangle
+  textmate
   discord
+  tuple
+  kap
+  kaleidoscope@3
+  1password
+  dash@6
   microsoft-teams
-  silicon
-  qflipper
-  pieces
-  ollama
-  devtoys
-  the-unarchiver
-  cheatsheet
-  zenmap
-  tiled
-  arduino-ide
-  transmission
+  microsoft-outlook
+  slack
+  pika
 )
 
 # Homebrew Formulae: Command line tools installed via Homebrew.
 FORMULAE=(
-  speedtest-cli
-  tree
-  nmap
-  wget
-  git
-  pinentry-mac
+  ruby
   python
-  python-tk
+  nodejs
+  postgresql
+  libvips
+  mupdf-tools
+  postgis
+  poppler
+  ghostscript
+  redis
+  memcached
+  yajl
+  ncdu
 )
 
 # NPM Packages: Global Node packages to be installed via NPM.
 NPMPACKAGES=(
-  express
 )
 
 # VSCode Extensions: Specifies the IDs of Visual Studio Code extensions to install.
 # Each ID corresponds to an extension on the Visual Studio Code Marketplace.
-VSCODE=(
-  "esbenp.prettier-vscode"
-  "GitHub.copilot"
-  "dsznajder.es7-react-js-snippets"
-  "ritwickdey.liveserver"
-  "github.vscode-pull-request-github"
-  "sourcegraph.cody-ai"
-  "eamodio.gitlens"
-  "meshintelligenttechnologiesinc.pieces-vscode"
-  "foxundermoon.shell-format"
-)
+# VSCODE=(
+#   "esbenp.prettier-vscode"
+#   "GitHub.copilot"
+#   "dsznajder.es7-react-js-snippets"
+#   "ritwickdey.liveserver"
+#   "github.vscode-pull-request-github"
+#   "sourcegraph.cody-ai"
+#   "eamodio.gitlens"
+#   "meshintelligenttechnologiesinc.pieces-vscode"
+#   "foxundermoon.shell-format"
+# )
 
 # App Store Apps: List of App Store app IDs to install via `mas` (Mac App Store CLI).
 # Each number corresponds to an application's ID in the App Store.
 APPSTORE=(
   409201541  # Pages
   409203825  # Numbers
-  1278508951 # Trello
+  408981434  # iMovie
+  409183694  # Keynote
 )
 
 # SYSTEM SETTINGS: Commands to configure macOS system preferences and behaviors.
 SETTINGS=(
   # Sets the mouse speed to 3
-  "defaults write -g com.apple.mouse.scaling 3"
+  "defaults write -g com.apple.mouse.scaling 2.5"
   # Sets the trackpad speed to 3
-  "defaults write -g com.apple.trackpad.scaling 3"
+  "defaults write -g com.apple.trackpad.scaling 2"
   # Sets the Bluetooth mouse to two-button mode
   "defaults write com.apple.driver.AppleBluetoothMultitouch.mouse MouseButtonMode TwoButton"
   # Sets the multi-touch mouse to two-button mode
@@ -104,6 +102,27 @@ SETTINGS=(
   "defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false"
   # Makes the Library folder visible in Finder
   "chflags nohidden ~/Library"
+  # Increase Keyboard Key Repeat Rate
+  "defaults write -g InitialKeyRepeat -int 10"
+  "defaults write -g KeyRepeat -int 0"
+  # Disable shadow in screenshots
+  "defaults write com.apple.screencapture disable-shadow -bool true"
+  # Disable floating screenshot preview
+  "defaults write com.apple.screencapture show-thumbnail -bool false"
+  # Empty Trash securely by default
+  "defaults write com.apple.finder EmptyTrashSecurely -bool true"
+  # Wipe all (default) app icons from the Dock
+  "defaults write com.apple.dock persistent-apps -array"
+  # Setting the icon size of Dock items to 64 pixels for optimal size/screen-realestate
+  "defaults write com.apple.dock tilesize -int 64"
+  # Setting Dock to auto-hide and removing the auto-hiding delay
+  "defaults write com.apple.dock autohide -bool true"
+  "defaults write com.apple.dock autohide-delay -float 0"
+  "defaults write com.apple.dock autohide-time-modifier -float 0"
+  # Enabling UTF-8 ONLY in Terminal.app and setting the Pro theme by default"
+  "defaults write com.apple.terminal StringEncodings -array 4"
+  "defaults write com.apple.Terminal \"Default Window Settings\" -string \"Pro\""
+  "defaults write com.apple.Terminal \"Startup Window Settings\" -string \"Pro\""
 )
 
 # DOCK SETTINGS: Configuration for adding, removing, and replacing Dock items.
@@ -113,24 +132,11 @@ DOCK_REPLACE=(
 )
 
 DOCK_ADD=(
-  "/Applications/iTerm.app"
-  "/Applications/Visual Studio Code.app"
-  "/Applications/GitHub Desktop.app"
-  "/Applications/Spotify.app"
-  "/Applications/Discord.app"
-  "/Applications/Microsoft Teams (work or school).app"
+  # "/Applications/Microsoft Teams (work or school).app"
 )
 DOCK_REMOVE=(
-  "Meldinger"
-  "Kart"
-  "Bilder"
-  "Påminnelser"
   "FaceTime"
-  "Kontakter"
-  "TV"
-  "Musikk"
-  "Mail"
 )
 
 # HOMEBREW AUTOUPDATE: Configures the frequency of Homebrew package updates in milliseconds.
-HOMEBREW_UPDATE_FREQUENCY=86400 # 24 hours in milliseconds
+#HOMEBREW_UPDATE_FREQUENCY=86400 # 24 hours in milliseconds
