@@ -125,6 +125,7 @@ SETTINGS=(
   "defaults write com.apple.terminal StringEncodings -array 4"
   "defaults write com.apple.Terminal \"Default Window Settings\" -string \"Pro\""
   "defaults write com.apple.Terminal \"Startup Window Settings\" -string \"Pro\""
+  "bundle config --global auto_install true"
 )
 
 # DOCK SETTINGS: Configuration for adding, removing, and replacing Dock items.
