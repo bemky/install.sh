@@ -47,7 +47,7 @@ echo
 sudo softwareupdate -i -a
 
 # Install Rosetta
-sudo softwareupdate --install-rosetta --agree-to-license
+# sudo softwareupdate --install-rosetta --agree-to-license
 
 # Install Homebrew
 echo
@@ -56,9 +56,10 @@ echo
 NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # Append Homebrew initialization to .zprofile
-echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>${HOME}/.zprofile
+# echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>${HOME}/.zprofile
 # Immediately evaluate the Homebrew environment settings for the current session
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# eval "$(/opt/homebrew/bin/brew shellenv)"
+# ^^^ unsure what this does -BE
 
 # Check installation and update
 echo
@@ -95,115 +96,56 @@ else
   done
 
   # App Store
-  echo
-  echo -n "${RED}Install apps from App Store? ${NC}[y/N]"
-  read REPLY
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
+  if ${#APPSTORE[@]} > 0; then
+    echo
+    echo -n "${RED}Installing apps from App Store...${NC}"
     brew install mas
     for app in "${APPSTORE[@]}"; do
       eval "mas install $app"
     done
   fi
+fi
 
-  # VS Code Extensions
+# VS Code Extensions
+if ${#VSCODE[@]} > 0; then
   echo
-  echo -n "${RED}Install VSCode Extensions? ${NC}[y/N]"
-  read REPLY
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-    # Install VS Code extensions from config.sh file
-    for extension in "${VSCODE[@]}"; do
-      code --install-extension "$extension"
-    done
+  echo -n "${RED}Installing VSCode Extensions...${NC}"
+  for extension in "${VSCODE[@]}"; do
+    code --install-extension "$extension"
+  done
+fi
+
+# Install Node.js if not Installed by Brew
+if ${#NPMPACKAGES[@]} > 0; then
+  if brew ls --versions node == /dev/null; then
+    echo
+    echo -n "${RED}Install Node.js via NVM or Brew? ${NC}[N/b]"
+    read REPLY
+    if [[ -z $REPLY || $REPLY =~ ^[Nn]$ ]]; then
+      echo "${GREEN}Installing NVM..."
+      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+
+      # Loads NVM
+      export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+      [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+      echo "${GREEN}Installing Node via NVM..."
+      nvm install --lts
+      nvm install node
+      nvm alias default node
+      nvm use default
+
+    fi
+    if [[ $REPLY =~ ^[Bb]$ ]]; then
+      echo "${GREEN}Installing Node via Homebrew..."
+      brew install node
+    fi
   fi
-fi
 
-# Install Node.js
-echo
-echo -n "${RED}Install Node.js via NVM or Brew? ${NC}[N/b]"
-read REPLY
-if [[ -z $REPLY || $REPLY =~ ^[Nn]$ ]]; then
-  echo "${GREEN}Installing NVM..."
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-
-  # Loads NVM
-  export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-
-  echo "${GREEN}Installing Node via NVM..."
-  nvm install --lts
-  nvm install node
-  nvm alias default node
-  nvm use default
-
-fi
-if [[ $REPLY =~ ^[Bb]$ ]]; then
-  echo "${GREEN}Installing Node via Homebrew..."
-  brew install node
-
-fi
-
-# Install NPM Packages
-echo
-echo "${GREEN}Installing Global NPM Packages..."
-npm install -g ${NPMPACKAGES[@]}
-
-# Optional Packages
-echo
-echo -n "${RED}Install .NET? ${NC}[y/N]"
-read REPLY
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-  brew install dotnet
-  export DOTNET_ROOT="/opt/homebrew/opt/dotnet/libexec"
-fi
-
-echo
-echo -n "${RED}Install Firefox Developer Edition? ${NC}[y/N]"
-read REPLY
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-  brew tap homebrew/cask-versions
-  brew install firefox-developer-edition
-fi
-
-echo
-echo -n "${RED}Install PosreSQL, MySQL & MongoDB? ${NC}[y/N]"
-read REPLY
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-  # Postgres
-  brew install postgresql
-  # MySQL
-  brew install mysql
-  echo -n "${RED}Set up MySQL now? ${NC}[y/N]"
-  read REPLY
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "${GREEN}Starting MySQL..."
-    brew services start mysql
-    sleep 2
-    mysql_secure_installation
-  fi
-  # MongoDB
-  brew tap mongodb/brew
-  brew install mongodb-community
-fi
-
-echo
-echo -n "${RED}Install Epic & Steam ${NC}[y/N]"
-read REPLY
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-  brew install steam epic-games
-fi
-
-echo
-echo -n "${RED}Install Unity Hub? ${NC}[y/N]"
-read REPLY
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-  brew install unity-hub
-fi
-
-echo
-echo -n "${RED}Install Figma? ${NC}[y/N]"
-read REPLY
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-  brew install figma
+  # Install NPM Packages
+  echo
+  echo "${GREEN}Installing Global NPM Packages..."
+  npm install -g ${NPMPACKAGES[@]}
 fi
 
 # Cleanup
@@ -263,11 +205,19 @@ git config --global color.ui true
 echo
 echo "${GREEN}GITTY UP!"
 
-# ohmyzsh
+# Migrate Files
 echo
-echo "${GREEN}Installing ohmyzsh!"
+echo "${GREEN}MIGRATING"
 echo
-sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+echo $MIGRATION_DIRS
+if [[ ! -z $MIGRATION_DIRS ]]; then
+  echo -n "${RED}Proceed to migrating $dir? ${NC}[c]"
+  read REPLY
+  if [[ $REPLY =~ ^[Cc]$ ]]; then
+  for dest dir in ${(kv)MIGRATION_DIRS}; do
+    copy_children $dir $dest
+  done
+fi
 
 clear
 echo "${GREEN}______ _____ _   _  _____ "
