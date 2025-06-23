@@ -205,18 +205,34 @@ git config --global color.ui true
 echo
 echo "${GREEN}GITTY UP!"
 
+# Sync Files
+echo
+echo "${GREEN}SYNCING"
+echo
+if [[ ! -z $SYNC_FILES ]]; then
+  echo -n "${RED}Proceed to syncing $SYNC_DIR? ${NC}[c]"
+  read REPLY
+  if [[ $REPLY =~ ^[Cc]$ ]]; then
+    for file in "${SYNC_FILES[@]}"; do
+      dest=$(echo "$file" | sed 's/~/$SYNC_DIR')
+      mkdir -p $dest
+      ln -s $dest $file
+    done
+  fi
+fi
+
 # Migrate Files
 echo
 echo "${GREEN}MIGRATING"
 echo
-echo $MIGRATION_DIRS
 if [[ ! -z $MIGRATION_DIRS ]]; then
   echo -n "${RED}Proceed to migrating $dir? ${NC}[c]"
   read REPLY
   if [[ $REPLY =~ ^[Cc]$ ]]; then
-  for dest dir in ${(kv)MIGRATION_DIRS}; do
-    copy_children $dir $dest
-  done
+    for dest dir in ${(kv)MIGRATION_DIRS}; do
+      copy_children $dir $dest
+    done
+  fi
 fi
 
 clear

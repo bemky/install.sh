@@ -141,6 +141,14 @@ DOCK_REMOVE=(
   "FaceTime"
 )
 
+SYNC_DIR="~/Library/Mobile\ Documents/com~apple~CloudDocs/Syncing"
+SYNC_FILES=(
+  "~/.zprofile"
+  "~/.zshrc"
+  "~/.tm_properties"
+  "~/.gitconfig"
+)
+
 typeset -A MIGRATION_DIRS=(
   [~/code]=~/Library/Mobile\ Documents/com~apple~CloudDocs/Migrations/code
 )
